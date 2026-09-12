@@ -13,7 +13,7 @@ from version import VERSION
 class DemoApp(App):
 
     def build(self):
-        self.title = "Demo App"
+        self.title = f"Demo App v{VERSION}"
 
         layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
 
