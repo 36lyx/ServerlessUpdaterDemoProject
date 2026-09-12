@@ -58,6 +58,9 @@ def sha256(path):
 def download_and_update(info):
     package_url = info["package_url"]
     filename = "temp/update.zip"
+    dirname = os.path.dirname(filename)
+    if dirname and not os.path.exists(dirname):
+        os.makedirs(dirname, exist_ok=True)
     print("Downloading...")
     expected_sha256 = requests.get(info["sha256_url"]).text.strip().split()[0]
     r = requests.get(package_url)
@@ -68,6 +71,10 @@ def download_and_update(info):
     print("Verified")
     with zipfile.ZipFile(filename) as z:
         z.extractall("new_version")
-    for f in os.listdir("new_version"):
-        shutil.copy("new_version/" + f, f)
+    shutil.copytree(
+        "new_version/",
+        "./",
+        dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns(".git", ".gitignore"),
+    )
     print("Update finished")
