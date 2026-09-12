@@ -10,6 +10,7 @@ import shutil
 import requests
 from packaging import version
 
+APP_NAME = "ServerlessUpdaterDemoProject"
 GITHUB_REPO = "36lyx/ServerlessUpdaterDemoProject"
 
 
@@ -30,9 +31,9 @@ def check_update(current_version):
     package, checksum = None, None
     for asset in release["assets"]:
         name = asset["name"]
-        if name.endswith(".zip"):
+        if name.startswith(APP_NAME) and name.endswith(".zip"):
             package = asset
-        elif name.endswith(".sha256"):
+        elif name.startswith(APP_NAME) and name.endswith(".sha256"):
             checksum = asset
     if package is None:
         raise Exception("No packages found")
