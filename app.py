@@ -1,8 +1,19 @@
+"""Demo for Serverless Updater
+Copyright (c) 2026 Louis Liu  All rights reserved.
+"""
+
 import tkinter as tk
+import updater
+from version import VERSION
 
 
 def check_update(msg):
-    msg.config(text="Sorry, update checker is unavailable")
+    result = updater.check_update(VERSION)
+    if result:
+        msg.config(text=f"Detect new version {result['version']}.")
+        updater.download_and_update(result)
+    else:
+        msg.config(text="It's already the latest version.")
 
 
 def main():
