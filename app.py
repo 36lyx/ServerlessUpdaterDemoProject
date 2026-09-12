@@ -2,46 +2,54 @@
 Copyright (c) 2026 Louis Liu  All rights reserved.
 """
 
-import updater
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
+import traceback
+import tkinter as tk
+from tkinter import messagebox
+
 from version import VERSION
+import updater
 
 
-class DemoApp(App):
+class DemoApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title(f"Demo App v{VERSION}")
 
-    def build(self):
-        self.title = f"Demo App v{VERSION}"
+        self.label = tk.Label(root, text="Serverless Updater Demo")
+        self.label.pack()
 
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
+        self.button = tk.Button(root, text="Check Update", command=self.check_update)
+        self.button.pack()
 
-        self.label = Label(text="Serverless Updater Demo", size_hint_y=None, height=40)
-        self.msg = Label(text="", size_hint_y=None, height=40)
+        self.msg = tk.Label(root, text="")
+        self.msg.pack()
 
-        self.button = Button(
-            text="Check Update",
-            size_hint_y=None,
-            height=50,
-            on_press=self.check_update,
-        )
+    def check_update(self):
+        self.msg.config(text="Checking for updates...")
+        self.root.update()
 
-        layout.add_widget(self.label)
-        layout.add_widget(self.button)
-        layout.add_widget(self.msg)
-
-        return layout
-
-    def check_update(self, instance):
-        result = updater.check_update(VERSION)
-        if result:
-            self.msg.text = f"Detect new version {result['version']}. Updating..."
-            updater.download_and_update(result)
-            self.msg.text = "Successfully download and update. Restart to run."
-        else:
-            self.msg.text = "It's already the latest version."
+        try:
+            result = updater.check_update(VERSION)
+            if result:
+                self.msg.config(
+                    text=f"Detect new version {result['version']}. Updating..."
+                )
+                self.root.update()
+                updater.download_and_update(result)
+                self.msg.config(
+                    text="Successfully download and update. Restart to run."
+                )
+            else:
+                self.msg.config(text="It's already the latest version.")
+        except Exception as e:
+            messagebox.showerror(
+                "Fail to update", f"Error occured: \n\n{traceback.format_exc()}"
+            )
+            self.msg.config(text="Update failed.", fg="red")
 
 
 if __name__ == "__main__":
-    DemoApp().run()
+    root = tk.Tk()
+    app = DemoApp(root)
+    root.update_idletasks()
+    root.mainloop()

@@ -4,5 +4,8 @@ __pycache__
 */__pycache__
 .venv
 release
+build
+dist
+*.spec
 .vscode
 .copilot-commit-message-instructions.md
